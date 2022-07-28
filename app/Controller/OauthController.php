@@ -1,0 +1,46 @@
+<?php
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+namespace App\Controller;
+
+use App\Constants\ErrorCode;
+use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
+
+class OauthController extends Controller
+{
+    public function login(): PsrResponseInterface
+    {
+        $state = $this->auth->generateLoginState();
+        return $this->response->redirect($this->githubClient->loginUrl($state));
+    }
+
+    public function logout(): PsrResponseInterface
+    {
+        $this->auth->logout();
+        $this->setSuccessFlashMessage('退出成功');
+        return $this->response->redirect('/');
+    }
+
+    public function redirect(): PsrResponseInterface
+    {
+        $code = $this->request->input('code');
+        $state = $this->request->input('state');
+        if (! $this->auth->isCorrectLoginState($state)) {
+            return $this->response->fail(ErrorCode::REQUEST_ERROR, 'state error');
+        }
+
+        $token = $this->githubClient->tokenFromCode($code);
+        $user = $this->githubClient->getCurrentUser($token);
+        $this->auth->login($user, $token);
+        $this->setSuccessFlashMessage('登录成功');
+        return $this->response->redirect('/');
+    }
+}
