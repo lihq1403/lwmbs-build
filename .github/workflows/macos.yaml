@@ -47,7 +47,7 @@ jobs:
         id: build_app
         continue-on-error: true
         run: |
-          /usr/local/bin/box build --output=/opt --name=lwmbs_build_${{ matrix.php-version }}_${{ matrix.arch }}_macos
+          /usr/local/bin/box build --name=lwmbs_build_${{ matrix.php-version }}_${{ matrix.arch }}_macos
 
       - name: Upload artifact for box
         if: steps.build_app.outcome == 'success'
