@@ -1,0 +1,63 @@
+name: MacOS build
+
+on:
+  push:
+    branches: [ "master" ]
+    tags: [ 'v*.*.*' ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  macos:
+    name: PHP ${{ matrix.php-version }} ${{ matrix.arch }}
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ["8.1"]
+        arch: ["x86_64"]
+      max-parallel: 1
+    env:
+      GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download Hyperf Box
+        id: hyperf_box
+        run: |
+          gh run download 2554976476 -R hyperf/box -n box_${{ matrix.php-version }}_${{ matrix.arch }}_macos
+          ls -a
+          mv ./box /usr/local/bin/box
+          chmod 755 /usr/local/bin/box
+
+      - name: Box Build Prepare
+        id: box_build_prepare
+        run: |
+          /usr/local/bin/box config set github.access-token ${{ env.GITHUB_TOKEN }}
+          /usr/local/bin/box build-prepare
+
+      - name: Vendor Installation
+        id: vendor_installation
+        run: |
+          /usr/local/bin/box composer install -o
+          /usr/local/bin/box bin/hyperf.php
+
+      - name: Build App
+        id: build_app
+        continue-on-error: true
+        run: |
+          /usr/local/bin/box build --output=/opt --name=lwmbs_build_${{ matrix.php-version }}_${{ matrix.arch }}_macos
+
+      - name: Upload artifact for box
+        if: steps.build_app.outcome == 'success'
+        uses: actions/upload-artifact@v3
+        with:
+          name: lwmbs_build_${{ matrix.php-version }}_${{ matrix.arch }}_macos
+          path: |
+            lwmbs_build_${{ matrix.php-version }}_${{ matrix.arch }}_macos
+
+      - name: Fail if box build failed
+        if: steps.build_app.outcome != 'success'
+        run: |
+          false
