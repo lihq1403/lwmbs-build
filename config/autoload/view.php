@@ -17,6 +17,6 @@ return [
     'mode' => Mode::SYNC,
     'config' => [
         'view_path' => BASE_PATH . '/storage/view/',
-        'cache_path' => BASE_PATH . '/runtime/view/',
+        'cache_path' => TEMP_PATH . '/runtime/view/',
     ],
 ];

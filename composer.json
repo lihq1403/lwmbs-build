@@ -36,6 +36,7 @@
         "hyperf/session": "3.0.*",
         "hyperf/utils": "3.0.*",
         "hyperf/view": "3.0.*",
+        "hyperf/phar": "3.0.*",
         "hyperf/view-engine": "3.0.*",
         "knplabs/github-api": "^3.0",
         "nesbot/carbon": "^2.60"

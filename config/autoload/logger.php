@@ -14,7 +14,7 @@ return [
         'handler' => [
             'class' => Monolog\Handler\StreamHandler::class,
             'constructor' => [
-                'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
+                'stream' => TEMP_PATH . '/runtime/logs/hyperf.log',
                 'level' => Monolog\Logger::INFO,
             ],
         ],
