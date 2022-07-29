@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace App\Controller;
 
-use App\Constants\ErrorCode;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
 class OauthController extends Controller
@@ -34,7 +33,8 @@ class OauthController extends Controller
         $code = $this->request->input('code');
         $state = $this->request->input('state');
         if (! $this->auth->isCorrectLoginState($state)) {
-            return $this->response->fail(ErrorCode::REQUEST_ERROR, 'state error');
+            $this->setFailFlashMessage('登录失败 state error');
+            return $this->response->redirect('/');
         }
 
         $token = $this->githubClient->tokenFromCode($code);
