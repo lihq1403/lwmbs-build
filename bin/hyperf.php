@@ -17,16 +17,11 @@ date_default_timezone_set('Asia/Shanghai');
 ! defined('BASE_PATH') && define('BASE_PATH', dirname(__DIR__, 1));
 ! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', 0);
 
-$tempPath = getenv('HOME') . '/.lwmbs-build';
-if (! is_dir($tempPath)) {
-    mkdir($tempPath, 0755, true);
-}
-! defined('TEMP_PATH') && define('TEMP_PATH', $tempPath);
-
 require BASE_PATH . '/vendor/autoload.php';
 
 // Self-called anonymous function that creates its own scope and keep the global namespace clean.
 (function () {
+    \App\Kernel\BoxEnvPrepare::init();
     Hyperf\Di\ClassLoader::init(handler: new Hyperf\Di\ScanHandler\ProcScanHandler());
     /** @var Psr\Container\ContainerInterface $container */
     $container = require BASE_PATH . '/config/container.php';
