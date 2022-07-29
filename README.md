@@ -42,4 +42,16 @@ $ php index.php start
 
 ## hyperf-box 部署
 
-// todo
+1、下载应用
+https://github.com/lihq1403/lwmbs-build/actions
+
+2、创建配置文件 `~/.lwmbs-build/.env` 并填写好申请的github oauth app信息
+```shell
+$ mkdir ~/..lwmbs-build
+$ cp .env.example ~/.lwmbs-build/.env
+```
+
+3、启动示例
+```shell
+$ ./lwmbs_build_8.1_x86_64_macos start
+```
