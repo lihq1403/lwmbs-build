@@ -26,7 +26,7 @@ jobs:
       - name: Download Hyperf Box
         id: hyperf_box
         run: |
-          gh run download 2554976476 -R hyperf/box -n box_${{ matrix.php-version }}_${{ matrix.arch }}_macos
+          gh run download 2716613159 -R hyperf/box -n box_${{ matrix.php-version }}_${{ matrix.arch }}_macos
           ls -a
           mv ./box /usr/local/bin/box
           chmod 755 /usr/local/bin/box
