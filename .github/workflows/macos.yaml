@@ -41,7 +41,7 @@ jobs:
         id: vendor_installation
         run: |
           /usr/local/bin/box composer install -o --no-dev
-          /usr/local/bin/box bin/hyperf.php
+          /usr/local/bin/box php bin/hyperf.php
 
       - name: Build App
         id: build_app
