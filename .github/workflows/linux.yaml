@@ -8,14 +8,67 @@ on:
     branches: [ "master" ]
 
 jobs:
-  linux:
+  x86_64:
     name: PHP ${{ matrix.php-version }} ${{ matrix.arch }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         php-version: ["8.1"]
-        arch: ["x86_64", "aarch64"]
+        arch: ["x86_64"]
+      max-parallel: 2
+    env:
+      GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download Hyperf Box
+        id: hyperf_box
+        run: |
+          wget https://github.com/hyperf/box/releases/download/v0.0.3/box_php${{ matrix.php-version }}_${{ matrix.arch }}_linux -O box
+          ls -a
+          mv ./box /usr/local/bin/box
+          chmod 755 /usr/local/bin/box
+
+      - name: Box Build Prepare
+        id: box_build_prepare
+        run: |
+          /usr/local/bin/box config set github.access-token ${{ env.GITHUB_TOKEN }}
+          /usr/local/bin/box build-prepare
+
+      - name: Vendor Installation
+        id: vendor_installation
+        run: |
+          /usr/local/bin/box composer install -o --no-dev
+          /usr/local/bin/box php bin/hyperf.php
+
+      - name: Build App
+        id: build_app
+        continue-on-error: true
+        run: |
+          /usr/local/bin/box build --name=lwmbs_build_${{ matrix.php-version }}_${{ matrix.arch }}_macos
+
+      - name: Upload artifact for box
+        if: steps.build_app.outcome == 'success'
+        uses: actions/upload-artifact@v3
+        with:
+          name: lwmbs_build_${{ matrix.php-version }}_${{ matrix.arch }}_macos
+          path: |
+            lwmbs_build_${{ matrix.php-version }}_${{ matrix.arch }}_macos
+
+      - name: Fail if box build failed
+        if: steps.build_app.outcome != 'success'
+        run: |
+          false
+  arm64:
+    name: PHP ${{ matrix.php-version }} ${{ matrix.arch }}
+    runs-on: [self-hosted, linux, arm64]
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ["8.1"]
+        arch: ["aarch64"]
       max-parallel: 2
     env:
       GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
