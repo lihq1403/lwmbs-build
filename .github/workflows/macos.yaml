@@ -40,7 +40,7 @@ jobs:
       - name: Vendor Installation
         id: vendor_installation
         run: |
-          /usr/local/bin/box composer install -o
+          /usr/local/bin/box composer install -o --no-dev
           /usr/local/bin/box bin/hyperf.php
 
       - name: Build App
