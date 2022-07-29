@@ -55,3 +55,5 @@ $ cp .env.example ~/.lwmbs-build/.env
 ```shell
 $ ./lwmbs_build_8.1_x86_64_macos start
 ```
+
+> tips: m1 mac下，下载的会标记为不安全的。需要使用 sudo xattr -d com.apple.quarantine "你的二进制路径"
